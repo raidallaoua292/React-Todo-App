@@ -1,10 +1,49 @@
 # React-Todo-App
 
-###### Live demo 
+### Live demo 
 [Click here for live demo](https://react-todo-appr.netlify.app/)
 
-###### Don't forget to run the following command:
-- npm install
+### Table of Contents
+- [About the project](#about-the-project)
+- [Features](#features)
+- [Technologies used](#technologies-used)
+- [How to run the app](#how-to-run-the-app)
+
+### About the project
+This is a simple todo app created using React and Vite. It is a simple todo app where you can add, delete and mark the todo as completed. It is a simple app to understand the basic concepts of React.
+
+### Features
+- Add todo
+- Delete todo
+- Mark todo as completed
+- Filter todos based on their status
+
+### Technologies used
+- React
+- Vite
+- tailwindcss
+- fontawesome
+
+### How to run the app
+- Clone the repository
+- Open the terminal and navigate to the project folder
+- Run the following command
+```bash
+npm install
+```
+- After the installation is complete, run the following command
+```bash
+npm run dev
+```
+- the app will start url will be displayed in the terminal. Open the url in the browser to see the app.
+
+### References
+- https://www.udemy.com/course/tarmeezacademy-react
+- [React](https://reactjs.org/)
+- [tailwindcss](https://tailwindcss.com/)
+- [fontawesome](https://fontawesome.com/)
+- [Vite](https://vitejs.dev/)
+
 
 # React + Vite
 
