@@ -1,6 +1,6 @@
 import Todo from "./Todo";
 import { v4 as uuidv4 } from "uuid";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useMemo } from "react";
 import { TodosContext } from "../contexts/todosContext";
 
 
@@ -15,13 +15,19 @@ export default function TodoList() {
     const [filter, setFilter] = useState("all");
     
     /* ==== Fillteration todos === */
-    const completedTodos = todos.filter((todo)=>{
-        return todo.isCompleted === true;
-    });
-
-    const unCompletedTodos = todos.filter((todo)=>{
-        return todo.isCompleted === false;
-    });
+    const completedTodos = useMemo(() => {
+         return todos.filter((todo)=>{
+            console.log("todo Completed");
+            return todo.isCompleted === true;
+        });
+    },[todos]);
+    
+    const unCompletedTodos = useMemo(() => {
+        return todos.filter((todo)=>{
+            console.log("todo UnCompleted");
+            return todo.isCompleted === false;
+        });
+    },[todos])
 
 
     /* ==== Fillteration todos === */
