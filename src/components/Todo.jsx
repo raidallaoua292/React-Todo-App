@@ -1,20 +1,20 @@
 /* eslint-disable react/prop-types */
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faPencil, faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import { useContext, useState } from "react";
+import { useContext  } from "react";
 import { TodosContext } from "../contexts/todosContext";
-import {DeletePopUp, EditPopUp} from "./Modal";
+import { SnackBarContext } from "../contexts/SnackBarContext";
 
 
 
 
-export default function Todo({todo}) {
+
+export default function Todo({todo, handelDeleteTodoClick, handelEditTodoClick}) {
     const {todos, setTodos} = useContext(TodosContext);
-    const [isDelete, setIsDelete] = useState(false);
-    const [isEdit, setIsEdit] = useState(false);
-    const [editTodo, setEditTodo] = useState({title: todo.title, description: todo.description});
+    const {showHideSnackBar} = useContext(SnackBarContext);
+    
+    
 
-    /* === Event Handlers === */
     const todoId = todo.id;
     /* ===  Handle Check Todo === */
     function handelCheckTodoClick  ()  {
@@ -27,65 +27,12 @@ export default function Todo({todo}) {
     }
     /* === Handle Check Todo === */
 
-    /* === Hndel Close Delete PopUp === */
-    function handelCloseDeletePopUp() {
-        setIsDelete(false);
-    }
-    /* === Hndel Close Delete PopUp === */
-
-    /* === confirme Delete Todo === */
-    function confrimeDeleteTodo() {
-        const newtodos = todos.filter((todo) => todo.id !== todoId);
-        setTodos(newtodos)
-        localStorage.setItem("todos", JSON.stringify(newtodos))
-        console.log("Delete")
-    }
-    /* === confirme Delete Todo === */
-
-    /* === Hndel Close Edit PopUp === */
-    function handelCloseEditPopUp() {
-        setIsEdit(false);
-    }
-    /* === Hndel Close Edit PopUp === */
     
-    /* === Confrime Edit Todo === */
-    function confrimeEditTodo() {
-        const newTodos = todos.map((todo) => {
-            // eslint-disable-next-line react/prop-types
-            if(todo.id === todoId) 
-            return(
-                {...todo, title: editTodo.title, description: editTodo.description}
-            );
-            return todo;
-        });
-        setTodos(newTodos);
-        handelCloseEditPopUp()
-        localStorage.setItem("todos", JSON.stringify(newTodos))
-    }
-    /* === Confrime Edit Todo === */
-
    
-
-    const editCheldern = (
-        <>
-            <input type="text" 
-                className="card outline-neutral-400 p-2 w-full mt-3" 
-                placeholder="عنوان المهمة"
-                value={editTodo.title}
-                onChange={(e) => setEditTodo({...editTodo, title: e.target.value})}
-            />
-            <textarea 
-                className="card outline-neutral-400 p-2 w-full mt-3" 
-                placeholder="وصف المهمة"
-                value={editTodo.description}
-                onChange={(e) => setEditTodo({...editTodo, description: e.target.value})}
-            />
-        </>
-    )
 
 
     return(
-        <div >
+        <>
             <div className="card p-2 grid grid-cols-12 h-fit z-50 hover:scale-105 mt-3">
                 <div className={
                     todo.isCompleted ? 
@@ -106,26 +53,26 @@ export default function Todo({todo}) {
                     } 
                     onClick={() => {
                         handelCheckTodoClick()
+                        showHideSnackBar("تم تحديث حالة المهمة بنجاح")
                     }}
                 />
                 {/* === Edit Icon === */}
                 <FontAwesomeIcon type="button" icon={faPencil} size="lg" 
                     className="text-blue-500 cursor-pointer transition-all hover:scale-105 hover:text-blue-700"
                     onClick={() => {
-                        setIsEdit(true)
+                        handelEditTodoClick(todo)
                     }}
                 />
                 {/* === Delete Icon === */}
                 <FontAwesomeIcon type="button" icon={faTrashCan} size="lg" 
                     className="text-red-500 cursor-pointer transition-all hover:scale-105 hover:text-red-700" 
                     onClick={() => {
-                        setIsDelete(true)
+                        handelDeleteTodoClick(todo)
                     }}
                 />
                 </div>
             </div>
-            <DeletePopUp isVisable={isDelete} handelClose={handelCloseDeletePopUp} handelDelete={confrimeDeleteTodo}/>
-            <EditPopUp isVisable={isEdit} handelClose={handelCloseEditPopUp} handelEdit={confrimeEditTodo} children={editCheldern}/>
-        </div>
+            
+        </>
     )
 }

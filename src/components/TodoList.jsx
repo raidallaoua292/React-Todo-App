@@ -2,6 +2,9 @@ import Todo from "./Todo";
 import { v4 as uuidv4 } from "uuid";
 import { useState, useContext, useEffect, useMemo } from "react";
 import { TodosContext } from "../contexts/todosContext";
+import { SnackBarContext } from "../contexts/SnackBarContext";
+import {DeletePopUp, EditPopUp} from "./Modal";
+
 
 
 
@@ -11,44 +14,19 @@ import { TodosContext } from "../contexts/todosContext";
 
 export default function TodoList() {
     const {todos, setTodos} = useContext(TodosContext);
+    const {showHideSnackBar} = useContext(SnackBarContext);
+      
     const [newTodo, setNewTodo] = useState("")
     const [filter, setFilter] = useState("all");
+    const [isDelete, setIsDelete] = useState(false);
+    const [isEdit, setIsEdit] = useState(false);
+    const [editTodo, setEditTodo] = useState({title: "", description: ""});
+    const [modalTodo, setModalTodo] = useState(null)
     
-    /* ==== Fillteration todos === */
-    const completedTodos = useMemo(() => {
-         return todos.filter((todo)=>{
-            console.log("todo Completed");
-            return todo.isCompleted === true;
-        });
-    },[todos]);
-    
-    const unCompletedTodos = useMemo(() => {
-        return todos.filter((todo)=>{
-            console.log("todo UnCompleted");
-            return todo.isCompleted === false;
-        });
-    },[todos])
 
 
-    /* ==== Fillteration todos === */
-
-    /* === Todo Items === */
-    let todoItems = todos;
     
-    if(filter === "all") {
-            todoItems = todos.map((todo) => {
-                return <Todo key={todo.id} todo={todo} />
-            })
-        } else if(filter === "completed") {
-            todoItems = completedTodos.map((todo) => {
-                return <Todo key={todo.id} todo={todo} />
-            })
-        } else if(filter === "non-completed") {
-            todoItems = unCompletedTodos.map((todo) => {
-                return <Todo key={todo.id} todo={todo} />
-            })
-        }
-    /* === Todo Items === */
+    
     
     /* === Local Storage === */
     useEffect(() => { 
@@ -73,10 +51,134 @@ export default function TodoList() {
         localStorage.setItem("todos", JSON.stringify(updatedTodos));
 
         setNewTodo("");
+        showHideSnackBar("تمت إضافة المهمة بنجاح");
     }
     /* === Add Todo === */
     
+    
+    /* === Handle Delete Todo === */
+    
+    function handelDeleteTodoClick(todo) {
+        setModalTodo(todo);
+        console.log("Delete" + todo.id)
+        setIsDelete(true);
+    }
+    /* === Handle Delete Todo === */
 
+    /* === Handle Edit Todo === */
+    function handelEditTodoClick(todo) {
+        setModalTodo(todo);
+        console.log("Edit" + todo.id)
+        setIsEdit(true);
+    }
+    /* === Handle Edit Todo === */
+
+     /* === Hndel Close Delete PopUp === */
+     function handelCloseDeletePopUp() {
+        setIsDelete(false);
+    }
+    /* === Hndel Close Delete PopUp === */
+
+    /* === confirme Delete Todo === */
+    function confrimeDeleteTodo() {
+        let todoId = modalTodo.id;
+        const newtodos = todos.filter((todo) => todo.id !== todoId);
+        setTodos(newtodos)
+        localStorage.setItem("todos", JSON.stringify(newtodos))
+        console.log("Delete")
+        handelCloseDeletePopUp()
+        showHideSnackBar("تم حذف المهمة بنجاح")
+    }
+    /* === confirme Delete Todo === */
+
+    /* === Hndel Close Edit PopUp === */
+    function handelCloseEditPopUp() {
+        setIsEdit(false);
+    }
+    /* === Hndel Close Edit PopUp === */
+    
+    /* === Confrime Edit Todo === */
+    function confrimeEditTodo() {
+        let todoId = modalTodo.id;
+        const newTodos = todos.map((todo) => {
+            if(todo.id === todoId) 
+            return(
+                {...todo, title: editTodo.title, description: editTodo.description}
+            );
+            return todo;
+        });
+        setTodos(newTodos);
+        handelCloseEditPopUp()
+        localStorage.setItem("todos", JSON.stringify(newTodos))
+        showHideSnackBar("تم تعديل المهمة بنجاح")
+        
+    }
+    /* === Confrime Edit Todo === */
+    
+   
+
+    const editCheldern = (
+        <>
+            <input type="text" 
+                className="card outline-neutral-400 p-2 w-full mt-3" 
+                placeholder="عنوان المهمة"
+                value={editTodo.title}
+                onChange={(e) => setEditTodo({...editTodo, title: e.target.value})}
+            />
+            <textarea 
+                className="card outline-neutral-400 p-2 w-full mt-3" 
+                placeholder="وصف المهمة"
+                value={editTodo.description}
+                onChange={(e) => setEditTodo({...editTodo, description: e.target.value})}
+            />
+        </>
+    )
+
+    /* ==== Fillteration todos === */
+    const completedTodos = useMemo(() => {
+        return todos.filter((todo)=>{
+            console.log("todo Completed");
+            return todo.isCompleted === true;
+        });
+    },[todos]);
+   
+    const unCompletedTodos = useMemo(() => {
+        return todos.filter((todo)=>{
+            console.log("todo UnCompleted");
+            return todo.isCompleted === false;
+        });
+    },[todos])
+
+
+   /* ==== Fillteration todos === */
+
+   /* === Todo Items === */
+    let todoItems = todos;
+    
+    if(filter === "all") {
+            todoItems = todos.map((todo) => {
+                return <Todo key={todo.id} todo={todo}
+                    handelEditTodoClick={handelEditTodoClick}
+                    handelDeleteTodoClick={handelDeleteTodoClick} 
+                />
+            })
+        } else if(filter === "completed") {
+            todoItems = completedTodos.map((todo) => {
+                return <Todo key={todo.id} todo={todo} 
+                    handelEditTodoClick={handelEditTodoClick}
+                    handelDeleteTodoClick={handelDeleteTodoClick} 
+                    
+                />
+            })
+        } else if(filter === "non-completed") {
+            todoItems = unCompletedTodos.map((todo) => {
+                return <Todo key={todo.id} todo={todo} 
+                    handelEditTodoClick={handelEditTodoClick}
+                    handelDeleteTodoClick={handelDeleteTodoClick} 
+                />
+            })
+        }
+   /* === Todo Items === */
 
     return(
         <>
@@ -134,7 +236,8 @@ export default function TodoList() {
                     </button>
                 </div>
             </div>
-            
+            <DeletePopUp isVisable={isDelete} handelClose={handelCloseDeletePopUp} handelDelete={confrimeDeleteTodo}/>
+            <EditPopUp isVisable={isEdit} handelClose={handelCloseEditPopUp} handelEdit={confrimeEditTodo}>children={editCheldern}</EditPopUp>
         </>
     )
 }
