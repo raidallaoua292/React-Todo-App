@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faPencil, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { useContext  } from "react";
 import { TodosContext } from "../contexts/todosContext";
-import { SnackBarContext } from "../contexts/SnackBarContext";
+import { useSnackBar } from "../contexts/SnackBarContext";
 
 
 
@@ -11,7 +11,7 @@ import { SnackBarContext } from "../contexts/SnackBarContext";
 
 export default function Todo({todo, handelDeleteTodoClick, handelEditTodoClick}) {
     const {todos, setTodos} = useContext(TodosContext);
-    const {showHideSnackBar} = useContext(SnackBarContext);
+    const {showHideSnackBar} = useSnackBar();
     
     
 

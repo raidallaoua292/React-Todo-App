@@ -2,7 +2,7 @@ import Todo from "./Todo";
 import { v4 as uuidv4 } from "uuid";
 import { useState, useContext, useEffect, useMemo } from "react";
 import { TodosContext } from "../contexts/todosContext";
-import { SnackBarContext } from "../contexts/SnackBarContext";
+import { useSnackBar } from "../contexts/SnackBarContext";
 import {DeletePopUp, EditPopUp} from "./Modal";
 
 
@@ -14,7 +14,7 @@ import {DeletePopUp, EditPopUp} from "./Modal";
 
 export default function TodoList() {
     const {todos, setTodos} = useContext(TodosContext);
-    const {showHideSnackBar} = useContext(SnackBarContext);
+    const {showHideSnackBar} = useSnackBar();
       
     const [newTodo, setNewTodo] = useState("")
     const [filter, setFilter] = useState("all");
@@ -68,6 +68,7 @@ export default function TodoList() {
     /* === Handle Edit Todo === */
     function handelEditTodoClick(todo) {
         setModalTodo(todo);
+        setEditTodo({title: todo.title, description: todo.description});
         console.log("Edit" + todo.id)
         setIsEdit(true);
     }
@@ -116,23 +117,7 @@ export default function TodoList() {
     /* === Confrime Edit Todo === */
     
    
-
-    const editCheldern = (
-        <>
-            <input type="text" 
-                className="card outline-neutral-400 p-2 w-full mt-3" 
-                placeholder="عنوان المهمة"
-                value={editTodo.title}
-                onChange={(e) => setEditTodo({...editTodo, title: e.target.value})}
-            />
-            <textarea 
-                className="card outline-neutral-400 p-2 w-full mt-3" 
-                placeholder="وصف المهمة"
-                value={editTodo.description}
-                onChange={(e) => setEditTodo({...editTodo, description: e.target.value})}
-            />
-        </>
-    )
+   
 
     /* ==== Fillteration todos === */
     const completedTodos = useMemo(() => {
@@ -180,6 +165,24 @@ export default function TodoList() {
         }
    /* === Todo Items === */
 
+    /* === Edit Children === */
+    const editCheldern = (
+        <>
+            <input type="text" 
+                className="card outline-neutral-400 p-2 w-full mt-3" 
+                placeholder="عنوان المهمة"
+                value={editTodo.title}
+                onChange={(e) => setEditTodo({...editTodo, title: e.target.value})}
+            />
+            <textarea 
+                className="card outline-neutral-400 p-2 w-full mt-3" 
+                placeholder="وصف المهمة"
+                value={editTodo.description}
+                onChange={(e) => setEditTodo({...editTodo, description: e.target.value})}
+            />
+        </>
+    )
+    /* ** Edit Cheldern ** */
     return(
         <>
             <div className="max-w-lg w-96 ma card bg-slate-100 my-3 max-md:scale-90">
@@ -237,7 +240,7 @@ export default function TodoList() {
                 </div>
             </div>
             <DeletePopUp isVisable={isDelete} handelClose={handelCloseDeletePopUp} handelDelete={confrimeDeleteTodo}/>
-            <EditPopUp isVisable={isEdit} handelClose={handelCloseEditPopUp} handelEdit={confrimeEditTodo}>children={editCheldern}</EditPopUp>
+            <EditPopUp isVisable={isEdit} handelClose={handelCloseEditPopUp} handelEdit={confrimeEditTodo}>{editCheldern}</EditPopUp>
         </>
     )
 }

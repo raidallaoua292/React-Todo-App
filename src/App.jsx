@@ -2,9 +2,9 @@ import './App.css'
 import TodoList from './components/TodoList'
 import { useState } from 'react';
 import { TodosContext } from './contexts/todosContext';
-import SnackBar from './components/SnackBar';
 
-import { SnackBarContext } from './contexts/SnackBarContext';
+
+import { SnackBarProvider } from './contexts/SnackBarContext';
 
 // const initialTodos = [
 //   {
@@ -36,28 +36,16 @@ import { SnackBarContext } from './contexts/SnackBarContext';
 
 function App() {
   const [todos, setTodos] = useState([]);
-  const [openSnackBar, setOpenSnackBar] = useState(false);
-  const [message, setMessage] = useState("")
-
-  const showHideSnackBar = (message) => {
-    setOpenSnackBar(true);
-    setMessage(message);
-    setTimeout(() => {
-      setOpenSnackBar(false);
-    }, 2000);
-  }
-
-  return (
+    return (
     <>
-      <SnackBarContext.Provider value={{showHideSnackBar} }>
+      <SnackBarProvider  >
         <div className="App">
-        <SnackBar isVisable={openSnackBar} message={message}/>
 
         <TodosContext.Provider value={{todos, setTodos}}>
           <TodoList />
         </TodosContext.Provider>
         </div>
-      </SnackBarContext.Provider>
+      </SnackBarProvider>
     </>
   )
 }

@@ -44,6 +44,12 @@ npm run dev
 - [fontawesome](https://fontawesome.com/)
 - [Vite](https://vitejs.dev/)
 
+### Refacroring the code
+- [x] Refactor the code to use the context api to manage the state
+- [x] Refactor the code to use the memoization to optimize the performance
+- [x] Refactor the code to use the Provider pattern to manage the state
+- [x] Refactor the code to use the custom hooks to manage the state
+- [ ] Refactor the code to use the useReducer hook to manage the state
 
 # React + Vite
 
