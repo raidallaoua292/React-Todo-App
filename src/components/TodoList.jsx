@@ -1,10 +1,8 @@
 import Todo from "./Todo";
-import { v4 as uuidv4 } from "uuid";
-import { useState, useContext, useEffect, useMemo } from "react";
-import { TodosContext } from "../contexts/todosContext";
+import { useState  , useEffect, useMemo, useReducer, useContext } from "react";
 import { useSnackBar } from "../contexts/SnackBarContext";
 import {DeletePopUp, EditPopUp} from "./Modal";
-
+import { useTodos } from "../contexts/todosContext";
 
 
 
@@ -13,9 +11,10 @@ import {DeletePopUp, EditPopUp} from "./Modal";
 
 
 export default function TodoList() {
-    const {todos, setTodos} = useContext(TodosContext);
     const {showHideSnackBar} = useSnackBar();
-      
+
+    const {todos, dispatch} = useTodos();
+
     const [newTodo, setNewTodo] = useState("")
     const [filter, setFilter] = useState("all");
     const [isDelete, setIsDelete] = useState(false);
@@ -25,31 +24,18 @@ export default function TodoList() {
     
 
 
+
     
     
     
     /* === Local Storage === */
-    useEffect(() => { 
-        const storageTodos = JSON.parse(localStorage.getItem("todos")) ?? [];
-        setTodos(storageTodos);
-        
-    },[]);
+    useEffect(() => { dispatch({type: "getTodos"});},[]);
     /* === Local Storage === */
 
     /* === Add Todo === */
     const hahdelAddTodoClick = () => {
         if(newTodo === "") return;
-        const newTodoItem = {
-            id: uuidv4(),
-            title: newTodo,
-            description: "التفاصيل الخاصة بالمهمة",
-            isCompleted: false
-        }
-        const updatedTodos = [...todos, newTodoItem];
-        setTodos(updatedTodos);
-
-        localStorage.setItem("todos", JSON.stringify(updatedTodos));
-
+        dispatch({type: "add", payload: {title: newTodo}})
         setNewTodo("");
         showHideSnackBar("تمت إضافة المهمة بنجاح");
     }
@@ -83,10 +69,7 @@ export default function TodoList() {
     /* === confirme Delete Todo === */
     function confrimeDeleteTodo() {
         let todoId = modalTodo.id;
-        const newtodos = todos.filter((todo) => todo.id !== todoId);
-        setTodos(newtodos)
-        localStorage.setItem("todos", JSON.stringify(newtodos))
-        console.log("Delete")
+        dispatch({type: "delete", payload: {id: todoId}})
         handelCloseDeletePopUp()
         showHideSnackBar("تم حذف المهمة بنجاح")
     }
@@ -101,16 +84,12 @@ export default function TodoList() {
     /* === Confrime Edit Todo === */
     function confrimeEditTodo() {
         let todoId = modalTodo.id;
-        const newTodos = todos.map((todo) => {
-            if(todo.id === todoId) 
-            return(
-                {...todo, title: editTodo.title, description: editTodo.description}
-            );
-            return todo;
-        });
-        setTodos(newTodos);
+        dispatch({type: "edit", payload: {
+            id: todoId,
+            title: editTodo.title,
+            description: editTodo.description
+        }})
         handelCloseEditPopUp()
-        localStorage.setItem("todos", JSON.stringify(newTodos))
         showHideSnackBar("تم تعديل المهمة بنجاح")
         
     }

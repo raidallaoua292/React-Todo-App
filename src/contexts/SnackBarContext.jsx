@@ -6,6 +6,7 @@ import SnackBar from "../components/SnackBar";
 
 export const SnackBarContext = createContext({});
 
+// eslint-disable-next-line react/prop-types
 export const SnackBarProvider = ({children}) => {
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [message, setMessage] = useState("")

@@ -1,29 +1,27 @@
 /* eslint-disable react/prop-types */
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faPencil, faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import { useContext  } from "react";
-import { TodosContext } from "../contexts/todosContext";
+import { useTodos } from "../contexts/todosContext";
 import { useSnackBar } from "../contexts/SnackBarContext";
 
 
 
 
 
+
 export default function Todo({todo, handelDeleteTodoClick, handelEditTodoClick}) {
-    const {todos, setTodos} = useContext(TodosContext);
     const {showHideSnackBar} = useSnackBar();
+    const {dispatch} = useTodos();
+
     
     
 
     const todoId = todo.id;
     /* ===  Handle Check Todo === */
     function handelCheckTodoClick  ()  {
-        const newTodos = todos.map((todo) => {
-            if(todo.id === todoId) return {...todo, isCompleted: !todo.isCompleted};
-            return todo;
-        });
-        setTodos(newTodos);
-        localStorage.setItem("todos", JSON.stringify(newTodos))
+        dispatch({type: "check", payload: {id: todoId}})
+        
+        showHideSnackBar("تم تحديث المهمة بنجاح")
     }
     /* === Handle Check Todo === */
 
@@ -52,8 +50,7 @@ export default function Todo({todo, handelDeleteTodoClick, handelEditTodoClick})
                         : "text-neutral-500 cursor-pointer transition-all hover:scale-125 hover:text-green-500"
                     } 
                     onClick={() => {
-                        handelCheckTodoClick()
-                        showHideSnackBar("تم تحديث حالة المهمة بنجاح")
+                        handelCheckTodoClick(todo)
                     }}
                 />
                 {/* === Edit Icon === */}

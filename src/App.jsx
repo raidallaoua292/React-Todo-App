@@ -1,10 +1,8 @@
 import './App.css'
 import TodoList from './components/TodoList'
-import { useState } from 'react';
-import { TodosContext } from './contexts/todosContext';
-
 
 import { SnackBarProvider } from './contexts/SnackBarContext';
+import TodosProvider from './contexts/todosContext';
 
 // const initialTodos = [
 //   {
@@ -35,18 +33,14 @@ import { SnackBarProvider } from './contexts/SnackBarContext';
 
 
 function App() {
-  const [todos, setTodos] = useState([]);
     return (
-    <>
+    <TodosProvider>
       <SnackBarProvider  >
         <div className="App">
-
-        <TodosContext.Provider value={{todos, setTodos}}>
-          <TodoList />
-        </TodosContext.Provider>
+          <TodoList /> 
         </div>
       </SnackBarProvider>
-    </>
+    </TodosProvider>
   )
 }
 
